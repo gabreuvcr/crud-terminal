@@ -27,5 +27,18 @@ namespace Laboratory
         {
             return employees;
         }
+
+        public void UpdateEmployeeById(EmployeeDTO employeeDTO)
+        {
+            Employee employee = FindEmployeeById(employeeDTO.Id);
+            if (employee == null) return;
+
+            int i = employees.IndexOf(employee);
+
+            employees[i].Name = employeeDTO.Name;
+            employees[i].Salary = employeeDTO.Salary;
+            employees[i].Role = employeeDTO.Role;
+            employees[i].Gender = employeeDTO.Gender;
+        }
     }
 }

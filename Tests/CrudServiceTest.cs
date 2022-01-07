@@ -76,5 +76,29 @@ namespace Laboratory.Tests
 
             Assert.Empty(employees);
         }
+
+        
+        [Fact]
+        public void UpdateEmployeeByIdTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee = new Employee("John", 3200, "Frontend", Gender.Masculine);
+
+            crud.AddEmployee(employee);
+
+            EmployeeDTO employeeDTO = new EmployeeDTO();
+            employeeDTO.Id = employee.Id;
+            employeeDTO.Name = "Joao";
+            employeeDTO.Salary = 4500;
+            employeeDTO.Role = "Frontend";
+            employeeDTO.Gender = Gender.Masculine;
+
+            crud.UpdateEmployeeById(employeeDTO);
+            employee = crud.FindEmployeeById(employeeDTO.Id);
+    
+            Assert.Equal("Joao", employee.Name);
+            Assert.Equal(4500, employee.Salary);
+            Assert.Equal(employeeDTO.Id, employee.Id);
+        }
     }
 }
