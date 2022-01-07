@@ -50,5 +50,31 @@ namespace Laboratory.Tests
 
             Assert.Null(employeeFindById);
         }
+
+        [Fact]
+        public void FindAllEmployeesTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee1 = new Employee("Anne", 3200, "Backend", Gender.Feminine);
+            Employee employee2 = new Employee("John", 3200, "Frontend", Gender.Masculine);
+
+            crud.AddEmployee(employee1);
+            crud.AddEmployee(employee2);
+
+            List<Employee> employees = crud.FindAllEmployees();
+
+            Assert.Equal(employee1, employees[0]);
+            Assert.Equal(employee2, employees[1]);
+        }
+
+        [Fact]
+        public void FindAllEmployeesWhenListIsEmptyTest()
+        {
+            CrudService crud = new CrudService();
+
+            List<Employee> employees = crud.FindAllEmployees();
+
+            Assert.Empty(employees);
+        }
     }
 }

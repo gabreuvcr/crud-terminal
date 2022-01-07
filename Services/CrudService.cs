@@ -22,5 +22,10 @@ namespace Laboratory
             }
             return null;
         }
+
+        public List<Employee> FindAllEmployees()
+        {
+            return employees;
+        }
     }
 }
