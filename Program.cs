@@ -6,7 +6,8 @@ namespace Laboratory
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // CrudTerminal crud = new CrudTerminal();     
+            // crud.Run();  
         }
     }
 }
