@@ -77,7 +77,6 @@ namespace Laboratory.Tests
             Assert.Empty(employees);
         }
 
-        
         [Fact]
         public void UpdateEmployeeByIdTest()
         {
@@ -99,6 +98,38 @@ namespace Laboratory.Tests
             Assert.Equal("Joao", employee.Name);
             Assert.Equal(4500, employee.Salary);
             Assert.Equal(employeeDTO.Id, employee.Id);
+        }
+
+        [Fact]
+        public void RemoveEmployeeTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee1 = new Employee("John", 3200, "Frontend", Gender.Masculine);
+            Employee employee2 = new Employee("Anne", 3200, "Backend", Gender.Feminine);
+            
+            crud.AddEmployee(employee1);
+            crud.AddEmployee(employee2);
+
+            Employee removedEmployee = crud.RemoveEmployeeById(employee2.Id);
+
+            Assert.Equal(employee2, removedEmployee);
+        }
+
+        [Fact]
+        public void RemovedEmployeeAndCheckListLengthTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee1 = new Employee("John", 3200, "Frontend", Gender.Masculine);
+            Employee employee2 = new Employee("Anne", 3200, "Backend", Gender.Feminine);
+            
+            crud.AddEmployee(employee1);
+            crud.AddEmployee(employee2);
+
+            crud.RemoveEmployeeById(employee1.Id);
+
+            List<Employee> employees = crud.FindAllEmployees();
+
+            Assert.Single(employees);
         }
     }
 }

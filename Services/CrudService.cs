@@ -40,5 +40,20 @@ namespace Laboratory
             employees[i].Role = employeeDTO.Role;
             employees[i].Gender = employeeDTO.Gender;
         }
+
+        public Employee RemoveEmployeeById(int id)
+        {
+            Employee removedEmployee;
+            foreach (Employee employee in employees) 
+            {
+                if (employee.Id == id)
+                {
+                    employees.Remove(employee);
+                    removedEmployee = employee;
+                    return removedEmployee;
+                }
+            }
+            return null;
+        }
     }
 }
