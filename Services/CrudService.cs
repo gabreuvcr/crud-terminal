@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Laboratory.Models;
 using Laboratory.Models.DTOs;
 
-namespace Laboratory
+namespace Laboratory.Services
 {
     public class CrudService
     {        

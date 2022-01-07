@@ -1,8 +1,9 @@
+using Xunit;
 using System.Collections.Generic;
 using Laboratory.Models;
 using Laboratory.Models.DTOs;
 using Laboratory.Models.Enums;
-using Xunit;
+using Laboratory.Services;
 
 namespace Laboratory.Tests
 {

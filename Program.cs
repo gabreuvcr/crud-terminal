@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Laboratory.Views;
 
 namespace Laboratory
 {
@@ -6,8 +6,8 @@ namespace Laboratory
     {
         static void Main(string[] args)
         {
-            // CrudTerminal crud = new CrudTerminal();     
-            // crud.Run();  
+            CrudTerminal crud = new CrudTerminal();     
+            crud.Run();  
         }
     }
 }
