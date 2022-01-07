@@ -7,12 +7,14 @@ namespace Laboratory
     public class CrudService
     {        
         private List<Employee> employees = new List<Employee>();
+        public Employee lastAdded = null;
         
         public CrudService() { }
 
         public void AddEmployee(Employee employee)
         {
             employees.Add(employee);
+            lastAdded = employee;
         }
 
         public Employee FindEmployeeById(int id)
@@ -48,6 +50,15 @@ namespace Laboratory
             {
                 if (employee.Id == id)
                 {
+                    int i = employees.IndexOf(employee);
+                    if (employee == lastAdded && employees.Count > 1) 
+                    {
+                        lastAdded = employees[i - 1];
+                    }
+                    else if (employee == lastAdded && employees.Count == 1)
+                    {
+                        lastAdded = null;
+                    }
                     employees.Remove(employee);
                     removedEmployee = employee;
                     return removedEmployee;

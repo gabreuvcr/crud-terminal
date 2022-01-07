@@ -131,5 +131,47 @@ namespace Laboratory.Tests
 
             Assert.Single(employees);
         }
+
+                
+        [Fact]
+        public void LastAddedEmployeeTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee1 = new Employee("John", 3200, "Frontend", Gender.Masculine);
+            Employee employee2 = new Employee("Anne", 3200, "Backend", Gender.Feminine);
+            
+            crud.AddEmployee(employee1);
+            crud.AddEmployee(employee2);
+
+            Assert.Equal(employee2, crud.lastAdded);
+        }
+
+        [Fact]
+        public void LastAddedAfterRemoveEmployeeWithNoEmptyListTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee1 = new Employee("John", 3200, "Frontend", Gender.Masculine);
+            Employee employee2 = new Employee("Anne", 3200, "Backend", Gender.Feminine);
+
+            crud.AddEmployee(employee1);
+            crud.AddEmployee(employee2);
+
+            crud.RemoveEmployeeById(employee2.Id);
+
+            Assert.Equal(employee1, crud.lastAdded);
+        }
+
+        [Fact]
+        public void LastAddedAfterRemoveEmployeeWithEmptyListTest()
+        {
+            CrudService crud = new CrudService();
+            Employee employee = new Employee("John", 3200, "Frontend", Gender.Masculine);
+
+            crud.AddEmployee(employee);
+
+            crud.RemoveEmployeeById(employee.Id);
+
+            Assert.Null(crud.lastAdded);
+        }
     }
 }
