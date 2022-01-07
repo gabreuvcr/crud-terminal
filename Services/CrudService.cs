@@ -9,5 +9,14 @@ namespace Laboratory
         
         public CrudService() { }
 
+        public void AddEmployee(Employee employee)
+        {
+            employees.Add(employee);
+        }
+
+        public Employee FindEmployeeById(int id)
+        {
+            return employees[0];
+        }
     }
 }
