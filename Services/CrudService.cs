@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Laboratory.Models;
+using Laboratory.Models.DTOs;
 
 namespace Laboratory
 {
@@ -16,7 +17,10 @@ namespace Laboratory
 
         public Employee FindEmployeeById(int id)
         {
-            return employees[0];
+            foreach (Employee employee in employees) {
+                if (employee.Id == id) return employee;
+            }
+            return null;
         }
     }
 }
