@@ -7,7 +7,7 @@ namespace Laboratory
         static void Main(string[] args)
         {
             CrudTerminal crud = new CrudTerminal();     
-            crud.Run();  
+            crud.Run();
         }
     }
 }

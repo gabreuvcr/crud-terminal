@@ -13,103 +13,148 @@ namespace Laboratory.Views
         
         public CrudTerminal() { }
 
-        private void Menu()
+        public void Run()
         {
+            int option;
+            while (true)
+            {
+                option = Home();
+                Switch(option);
+                PressToContinue();
+            }
+        }
+
+        private int Home()
+        {
+            Console.Clear();
             Console.WriteLine("CRUD DE FUNCIONARIOS");
-            Console.WriteLine("[1] Listar todos funcionarios");
-            Console.WriteLine("[2] Listar pelo id do funcionario");
-            Console.WriteLine("[3] Adicionar funcionario");
-            Console.WriteLine("[4] Remover funcionario pelo id");
-            Console.WriteLine("[5] Atualizar pelo id");
-            Console.WriteLine("[6] Parar");
-            Console.Write("\nDigite uma opcao: ");
+            int option = Menu(options: new List<string> {
+                    "Listar todos funcionarios", "Listar pelo id do funcionario",
+                    "Adicionar funcionario", "Remover funcionario pelo id",
+                    "Atualizar pelo id", "Parar"
+                },
+                text: "Digite uma opcao:"
+            );
+            return option;
         }
 
-        private void InvalidInput()
+        private void Switch(int option)
         {
-            Console.WriteLine("Valor invalido, selecione um numero entre 0-9");
-            Console.WriteLine("Pressione Enter para continuar");
+            switch (option)
+            {
+                case 1: ListAllEmployees(); break;
+                case 2: ListEmployeeById(); break;
+                case 3: AddEmployee(); break;
+                case 4: RemoveEmployeeById(); break;
+                case 5: UpdateEmployeeById(); break;
+                case 6: Environment.Exit(0); break;
+                default: InvalidInput(); break;
+            }
         }
 
-        private int Confirmation(Employee employee)
-        {
-            Console.WriteLine($"\nFuncionario com ID {employee.Id}:");
-            Console.WriteLine($"{employee}\n");
-            Console.WriteLine("[1] Sim");
-            Console.WriteLine("[2] Nao");
-            Console.Write("Tem certeza que deseja continuar? ");
-            int confirmation = Int32.Parse(Console.ReadLine());
-            return confirmation;
+        private int Menu(List<string> options, string text)
+        { 
+            int option;
+            for (int i = 0; i < options.Count; i++)
+            {
+                Console.WriteLine($"[{i + 1}] {options[i]}");
+            }
+            while ((option = ValidInput.Int(text, limit: options.Count)) == -1)
+                InvalidInput();
+            return option;
         }
 
-        private EmployeeDTO EmployeeInput()
+        private void AddEmployee()
         {
-            EmployeeDTO employeeDTO = new EmployeeDTO();
-            Console.WriteLine("Insira os novos valores: ");
-            Console.Write("Digite o nome: ");
-            employeeDTO.Name = Console.ReadLine();
-            Console.Write("Digite o salario: ");
-            employeeDTO.Salary = Double.Parse(Console.ReadLine());
-            Console.Write("Digite a funcao: ");
-            employeeDTO.Role = Console.ReadLine();
-            Console.WriteLine("[1] Masculino");
-            Console.WriteLine("[2] Feminino");
-            Console.WriteLine("[3] Outro");
-            Console.Write("Digite o genero: ");
-            employeeDTO.Gender = (Gender) Int16.Parse(Console.ReadLine());
-            return employeeDTO;
-        }
+            Console.Clear();
+            Console.WriteLine("ADICIONAR FUNCIONARIO");
+            EmployeeDTO employeeDTO = EmployeeInput("Insira os valores");
+            
+            Employee employee = new Employee(employeeDTO);
+            service.AddEmployee(employee);
+
+            Console.WriteLine($"\n{employee}");
+            Console.WriteLine("\nFuncionario adicionado com sucesso");
+        } 
 
         private void ListEmployeeById()
         {
-            Console.Write("Digite o ID: ");
-            int id = Int32.Parse(Console.ReadLine());
+            Console.Clear();
+            Console.WriteLine("BUSCAR FUNCIONARIO");
+            int id;
+            while ((id = ValidInput.Int("Digite o ID:")) == -1)
+                InvalidInput();
 
             Employee employee = service.FindEmployeeById(id);
 
             if (employee == null)
             {
-                Console.WriteLine($"\nFuncionario com ID {id} nao encontrado\n");
+                Console.WriteLine($"\nFuncionario com ID {id} nao encontrado");
                 return;
             }
 
-            Console.WriteLine($"\nFuncionario com ID {id}:");
-            Console.WriteLine($"{employee}\n");
+            Console.WriteLine($"\nID {id}: {employee}");
         } 
 
         private void ListAllEmployees()
         {
+            Console.Clear();
+            Console.WriteLine("TODOS FUNCIONARIOS");
             Console.WriteLine();
             List<Employee> employees = service.FindAllEmployees();
             if (employees.Count == 0) {
-                Console.WriteLine("Nenhum funcionario cadastrado\n");
+                Console.WriteLine("Nenhum funcionario cadastrado");
                 return;
             }
             foreach (Employee employee in employees)
             {
                 Console.WriteLine($"ID {employee.Id}: {employee}");
             }
-            Console.WriteLine();
-        } 
-
-        private void AddEmployee()
+        }
+        
+        private void UpdateEmployeeById()
         {
-            EmployeeDTO employeeDTO = EmployeeInput();
-            
-            Employee employee = new Employee(employeeDTO);
-            service.AddEmployee(employee);
-        } 
-
-        private void RemoveEmployeeById()
-        {
-            Console.Write("Digite o ID: ");
-            int id = Int32.Parse(Console.ReadLine());
+            Console.Clear();
+            Console.WriteLine("ATUALIZAR FUNCIONARIO");
+            int id;
+            while ((id = ValidInput.Int("Digite o ID:")) == -1)
+                InvalidInput();
 
             Employee employee = service.FindEmployeeById(id);
 
             if (employee == null)
             {
-                Console.WriteLine($"\nFuncionario com ID {id} nao encontrado\n");
+                Console.WriteLine($"\nFuncionario com ID {id} nao encontrado");
+                return;
+            }
+
+            int confirmation = Confirmation(employee);
+
+            if (confirmation == 2) return;
+
+            EmployeeDTO employeeDTO = EmployeeInput("\nInsira os novos valores");
+            employeeDTO.Id = id;
+
+            service.UpdateEmployeeById(employeeDTO);
+
+            employee = service.FindEmployeeById(id);
+            Console.WriteLine($"\n{employee}");
+            Console.WriteLine("\nFuncionario atualizado com sucesso");
+        }
+
+        private void RemoveEmployeeById()
+        {
+            Console.Clear();
+            Console.WriteLine("REMOVER FUNCIONARIO");
+            int id;
+            while ((id = ValidInput.Int("Digite o ID:")) == -1)
+                InvalidInput();
+
+            Employee employee = service.FindEmployeeById(id);
+
+            if (employee == null)
+            {
+                Console.WriteLine($"\nFuncionario com ID {id} nao encontrado");
                 return;
             }
 
@@ -118,86 +163,49 @@ namespace Laboratory.Views
             if (confirmation == 2) return;
 
             service.RemoveEmployeeById(id);
-            Console.WriteLine("Funcionario excluido com sucesso");
+            Console.WriteLine("\nFuncionario excluido com sucesso");
         }
 
-        private void UpdateEmployeeById()
+        private int Confirmation(Employee employee)
         {
-            Console.Write("Digite o ID: ");
-            int id = Int32.Parse(Console.ReadLine());
-
-            Employee employee = service.FindEmployeeById(id);
-
-            if (employee == null)
-            {
-                Console.WriteLine($"\nFuncionario com ID {id} nao encontrado\n");
-                return;
-            }
-
-            int confirmation = Confirmation(employee);
-
-            if (confirmation == 2) return;
-
-            EmployeeDTO employeeDTO = EmployeeInput();
-            employeeDTO.Id = id;
-
-            service.UpdateEmployeeById(employeeDTO);
-
-            employee = service.FindEmployeeById(id);
-            Console.WriteLine(employee);
-            Console.WriteLine("Funcionario atualizado com sucesso");
+            Console.WriteLine($"\nID {employee.Id}: {employee}\n");
+            int confirmation = Menu(options: new List<string> {
+                    "Sim", "Nao"
+                },
+                text: "Tem certeza que deseja continuar?"
+            );
+            return confirmation;
         }
 
-        public void Run()
+        private EmployeeDTO EmployeeInput(string text)
         {
-            short option;
-            while (true)
-            {
-                Menu();
+            EmployeeDTO employeeDTO = new EmployeeDTO();
+            Console.WriteLine($"{text}");
+            while ((employeeDTO.Name = ValidInput.String("Digite o nome:")).Equals(""))
+                InvalidInput();
+            while ((employeeDTO.Salary = ValidInput.Decimal("Digite o salario:")) == -1)
+                InvalidInput();
+            while ((employeeDTO.Role = ValidInput.String("Digite a funcao:")).Equals(""))
+                InvalidInput();
+            employeeDTO.Gender = (Gender) Menu(options: new List<string> {
+                    "Masculino",
+                    "Feminino",
+                    "Outro"
+                 },
+                 text: "Digite o genero:"
+            );
+            return employeeDTO;
+        }
 
-                try
-                {
-                    option = Int16.Parse(Console.ReadLine());
-                }
-                catch 
-                {
-                    InvalidInput();
-                    continue;
-                }
+        private void InvalidInput()
+        {
+            Console.WriteLine("Valor invalido.");
+        }
 
-                switch (option)
-                {
-                    case 1:
-                        ListAllEmployees();
-                        break;
-
-                    case 2:
-                        ListEmployeeById();
-                        break;
-
-                    case 3:
-                        AddEmployee();
-                        break;
-
-                    case 4:
-                        RemoveEmployeeById();
-                        break;
-
-                    case 5:
-                        UpdateEmployeeById();
-                        break;
-
-                    case 6:
-                        return;
-
-                    default:
-                        InvalidInput();
-                        break;
-                }
-                Console.Write("Pressione enter para continuar...");
-                Console.ReadLine();
-                Console.WriteLine();
-            }
+        private void PressToContinue()
+        {
+            Console.Write("\nPressione enter para continuar...");
+            Console.ReadLine();
         }
     }
 }
